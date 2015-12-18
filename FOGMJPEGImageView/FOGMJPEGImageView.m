@@ -102,7 +102,7 @@
     if ( !self.isReadingData ) {
         return;
     }
-    
+    self.image = nil;
     [self.dataReader stop];
     self.isReadingData = NO;
 }
