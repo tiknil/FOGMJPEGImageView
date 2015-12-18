@@ -75,11 +75,19 @@
     
     return self;
 }
+#pragma mark - Custom accessors
 
 - (NSURLSession *)URLSession
 {
     return self.dataReader.URLSession;
 }
+
+- (void)setImageScale:(CGFloat)imageScale
+{
+    _imageScale = imageScale;
+    self.dataReader.imageScale = imageScale;
+}
+
 
 #pragma mark - FOGMJPEGImageView
 
@@ -111,6 +119,7 @@
 
 - (void)FOGMJPEGDataReader:(FOGMJPEGDataReader *)reader receivedImage:(UIImage *)image
 {
+    NSLog(@"image size: %@",NSStringFromCGSize(image.size));
     self.image = image;
     if ([self.delegate respondsToSelector:@selector(FOGMJPEGImageViewDidReceiveImage:)]) {
         [self.delegate FOGMJPEGImageViewDidReceiveImage:self];

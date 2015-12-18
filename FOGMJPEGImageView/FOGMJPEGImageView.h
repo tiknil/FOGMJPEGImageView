@@ -27,6 +27,7 @@
 
 @property (nonatomic, strong, readonly) NSURLSession *URLSession;
 @property (nonatomic, weak) id<FOGMJPEGImageViewDelegate> delegate;
+@property (nonatomic) CGFloat imageScale;
 
 /**
  Begins reading MJPEG data from the given URL.

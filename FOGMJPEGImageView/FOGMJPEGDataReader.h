@@ -36,6 +36,11 @@
 @property (nonatomic, weak) id<FOGMJPEGDataReaderDelegate> delegate;
 
 /**
+ The scale of mjpeg image that will be rendered
+ */
+@property (nonatomic) CGFloat imageScale;
+
+/**
  Begins reading MJPEG data from the given URL.
  
  @param URL The URL to make a request for MJPEG data.

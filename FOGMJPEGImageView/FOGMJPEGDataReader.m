@@ -50,7 +50,7 @@
     if ( !self ) {
         return nil;
     }
-    
+    self.imageScale = 0.5;
     self.processingQueue = [[NSOperationQueue alloc] init];
     
     return self;
@@ -107,7 +107,7 @@
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
     [self.receivedData appendData:data];
-    NSLog(@"[%@] - data: %@ %@", self.url, data, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+//    NSLog(@"[%@] - data: %@ %@", self.url, data, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     
     // if we don't have an end marker then we can continue
     NSRange endMarkerRange = [self.receivedData rangeOfData:[FOGJPEGImageMarker JPEGEndMarker]
@@ -129,7 +129,7 @@
     NSUInteger imageDataLength = (endMarkerRange.location + 2) - startMarkerRange.location;
     NSRange imageDataRange = NSMakeRange(startMarkerRange.location, imageDataLength);
     NSData *imageData = [self.receivedData subdataWithRange:imageDataRange];
-    UIImage *image = [UIImage imageWithData:imageData scale:0.5];
+    UIImage *image = [UIImage imageWithData:imageData scale:self.imageScale];
     
     if ( image ) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -146,7 +146,6 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    NSLog(@"[%@] - error! %@",self.url, error);
     if (error.code == kCFURLErrorCancelled) {
         // Manually cancelled request
         return;
