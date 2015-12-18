@@ -83,7 +83,7 @@
 
 #pragma mark - FOGMJPEGImageView
 
-- (void)startWithURL:(NSURL *)url
+- (void)startWithURL:(NSURL *)url username:(NSString *)username password:(NSString *)password
 {
     if ( !url ) {
         return;
@@ -94,7 +94,7 @@
     }
     
     self.isReadingData = YES;
-    [self.dataReader startReadingFromURL:url];
+    [self.dataReader startReadingFromURL:url username:username password:password];
 }
 
 - (void)stop

@@ -26,9 +26,11 @@
 @interface Camera : NSObject
 
 @property (nonatomic, strong, readonly) NSString *name;
-
+@property (nonatomic, strong, readonly) NSString *username;
+@property (nonatomic, strong, readonly) NSString *password;
 @property (nonatomic, strong, readonly) NSURL *URL;
 
 - (instancetype)initWithName:(NSString *)name URL:(NSURL *)URL;
+- (instancetype)initWithName:(NSString *)name URL:(NSURL *)URL username:(NSString*)username password:(NSString*)password;
 
 @end

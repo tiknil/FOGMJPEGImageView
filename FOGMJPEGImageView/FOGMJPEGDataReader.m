@@ -34,6 +34,10 @@
 
 @property (nonatomic, strong, readwrite) NSMutableData *receivedData;
 
+@property (nonatomic, strong) NSURL *url;
+@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSString *password;
+
 @end
 
 @implementation FOGMJPEGDataReader
@@ -47,19 +51,45 @@
         return nil;
     }
     
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-
     self.processingQueue = [[NSOperationQueue alloc] init];
-    self.URLSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:self.processingQueue];
-                             
+    
     return self;
 }
 
 #pragma mark - FOGMJPEGDataReader
 
-- (void)startReadingFromURL:(NSURL *)URL
+- (void)startReadingFromURL:(NSURL *)URL username:(NSString *)username password:(NSString *)password
 {
     self.receivedData = [[NSMutableData alloc] init];
+    self.url = URL;
+    self.username = username;
+    self.password = password;
+    
+    
+    // 1 - define credentials as a string with format:
+    //    "username:password"
+    //
+    NSString *authString = [NSString stringWithFormat:@"%@:%@",
+                            username,
+                            password];
+    
+    // 2 - convert authString to an NSData instance
+    NSData *authData = [authString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    // 3 - build the header string with base64 encoded data
+    NSString *authHeader = [NSString stringWithFormat: @"Basic %@",
+                            [authData base64EncodedStringWithOptions:0]];
+    
+    // 4 - create an NSURLSessionConfiguration instance
+    NSURLSessionConfiguration *sessionConfig =
+    [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    // 5 - add custom headers, including the Authorization header
+    [sessionConfig setHTTPAdditionalHeaders:@{
+                                              @"Authorization": authHeader
+                                              }
+     ];
+    self.URLSession = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self delegateQueue:self.processingQueue];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     self.dataTask = [self.URLSession dataTaskWithRequest:request];
@@ -77,6 +107,7 @@
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
     [self.receivedData appendData:data];
+    NSLog(@"[%@] - data: %@ %@", self.url, data, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     
     // if we don't have an end marker then we can continue
     NSRange endMarkerRange = [self.receivedData rangeOfData:[FOGJPEGImageMarker JPEGEndMarker]
@@ -115,6 +146,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
+    NSLog(@"[%@] - error! %@",self.url, error);
     if (error.code == kCFURLErrorCancelled) {
         // Manually cancelled request
         return;
@@ -123,6 +155,18 @@
         __strong id<FOGMJPEGDataReaderDelegate> strongDelegate = self.delegate;
         [strongDelegate FOGMJPEGDataReader:self loadingImageDidFailWithError:error];
     });
+}
+
+- (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+ completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler
+{
+    if (self.username != nil) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential,[NSURLCredential credentialWithUser:self.username
+                                                                                            password:(self.password != nil ? self.password : @"")
+                                                                                         persistence:NSURLCredentialPersistenceForSession]);
+    }else{
+        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge,nil);
+    }
 }
 
 @end

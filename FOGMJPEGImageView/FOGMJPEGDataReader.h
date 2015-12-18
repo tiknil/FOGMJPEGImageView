@@ -39,8 +39,10 @@
  Begins reading MJPEG data from the given URL.
  
  @param URL The URL to make a request for MJPEG data.
+ @param username username of MJPEG source (optional)
+ @param password password of MJPEG source (optional)
  */
-- (void)startReadingFromURL:(NSURL *)URL;
+- (void)startReadingFromURL:(NSURL *)URL username:(NSString*)username password:(NSString*)password;
 
 /**
  Stops reading MJPEG data.

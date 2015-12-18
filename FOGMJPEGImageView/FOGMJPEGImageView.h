@@ -34,8 +34,10 @@
  Successive calls to `startWithURL:` without first calling `stop` will be ignored.
  
  @param url The URL of the MJPEG feed, if nil is passed the call will be ignored.
+ @param username username of MJPEG source (optional)
+ @param password password of MJPEG source (optional)
  */
-- (void)startWithURL:(NSURL *)url;
+- (void)startWithURL:(NSURL *)url username:(NSString*)username password:(NSString*)password;
 
 /**
  Stops reading MJPEG data.

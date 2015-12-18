@@ -51,7 +51,31 @@
                      [[Camera alloc] initWithName:@"Webcam (Kingston Ontario Canada)"
                                               URL:[NSURL URLWithString:@"http://130.15.110.15/mjpg/video.mjpg?camera=1"]],
                      [[Camera alloc] initWithName:@"Spring Grove (Spring Grove Minnesota United States)"
-                                              URL:[NSURL URLWithString:@"http://204.248.124.203/mjpg/video.mjpg?camera=1"]]];
+                                              URL:[NSURL URLWithString:@"http://204.248.124.203/mjpg/video.mjpg?camera=1"]],
+                     [[Camera alloc] initWithName:@"Mobotix 1"
+                                              URL:[NSURL URLWithString:@"http://sup1.mobotixcam.de:8003/cgi-bin/faststream.jpg?stream=full"]
+                                         username:@"admin"
+                                         password:@"M0b0t1x"],
+                     [[Camera alloc] initWithName:@"Mobotix 2"
+                                              URL:[NSURL URLWithString:@"http://sup1.mobotixcam.de:8002/cgi-bin/faststream.jpg?stream=full"]
+                                         username:@"admin"
+                                         password:@"M0b0t1x"],
+                     [[Camera alloc] initWithName:@"Laboratorio prove chorus"
+                                              URL:[NSURL URLWithString:@"http://10.10.124.91/mjpg/1/video.mjpg"]
+                                         username:@"root"
+                                         password:@"root"],
+                     [[Camera alloc] initWithName:@"DLink-1"
+                                              URL:[NSURL URLWithString:@"http://10.10.124.66/video.cgi"]
+                                         username:@"admin"
+                                         password:@""],
+                     [[Camera alloc] initWithName:@"DLink-2"
+                                              URL:[NSURL URLWithString:@"http://10.10.124.66/mjpeg.cgi"]
+                                         username:@"admin"
+                                         password:@""],
+                     [[Camera alloc] initWithName:@"DLink-3"
+                                              URL:[NSURL URLWithString:@"http://@10.10.124.59/video.cgi"]
+                                         username:@"admin"
+                                         password:@"giovinazzi"]];
     
     [self.cameraPicker selectRow:0 inComponent:0 animated:NO];
     self.selectedCamera = self.cameras[0];
@@ -64,7 +88,7 @@
 {
     self.startButton.enabled = NO;
     
-    [self.mjpegImageView startWithURL:self.selectedCamera.URL];
+    [self.mjpegImageView startWithURL:self.selectedCamera.URL username:self.selectedCamera.username password:self.selectedCamera.password];
 
     self.stopButton.enabled = YES;
 }

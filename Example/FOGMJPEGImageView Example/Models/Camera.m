@@ -38,4 +38,14 @@
     return self;
 }
 
+- (instancetype)initWithName:(NSString *)name URL:(NSURL *)URL username:(NSString*)username password:(NSString*)password
+{
+    self = [self initWithName:name URL:URL];
+    if (self != nil) {
+        _username = username;
+        _password = password;
+    }
+    return self;
+}
+
 @end
